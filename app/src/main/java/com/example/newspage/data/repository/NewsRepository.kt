@@ -1,5 +1,6 @@
 package com.example.newspage.data.repository
 
+import android.util.Log
 import com.example.newspage.data.model.Article
 import com.example.newspage.data.remotedata.RemoteDataSource
 import kotlinx.coroutines.Dispatchers
@@ -12,17 +13,25 @@ class NewsRepository(private val remoteDataSource: RemoteDataSource = RemoteData
     suspend fun getNewsArticles(queryMap: Map<String, String>): Flow<List<Article>> = flow {
         val response = remoteDataSource.getRemoteData(queryMap)
         val articleList:MutableList<Article> = mutableListOf()
-        for (article in response.articles) {
-            articleList.add(
-                Article(
-                    article.title,
-                    article.urlToImage,
-                    article.description,
-                    article.content,
-                    article.author
+        if(response.isSuccessful) {
+            val articles = response.body()?.articles ?: emptyList()
+            Log.d("NewsRepository", "Response: ${response.body()}")
+
+            for (article in articles) {
+                articleList.add(
+                    Article(
+                        article.title,
+                        article.urlToImage,
+                        article.description,
+                        article.content,
+                        article.author
+                    )
                 )
-            )
+            }
+            emit(articleList)
+        } else {
+            Log.d("NewsRepository", "Error: ${response.code()}")
+            emit(emptyList())
         }
-        emit(articleList)
     }.flowOn(Dispatchers.IO)
 }

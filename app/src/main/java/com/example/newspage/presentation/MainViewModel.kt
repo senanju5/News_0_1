@@ -12,28 +12,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel(private val repository: NewsRepository = NewsRepository()): ViewModel() {
-    private val newsLiveData = MutableLiveData<List<Article>>()
+    //private val newsLiveData = MutableLiveData<List<Article>>()
     private val articleMutableSate by lazy {MutableStateFlow(ArticleUIModel(true, null))  }
     internal val articleList : StateFlow<ArticleUIModel> = articleMutableSate
-    private val observer = Observer<List<Article>> {
-        if (it.isNotEmpty()){
-            articleMutableSate.value = ArticleUIModel(false, it)
-        }
-    }
-
-
 
    fun getNews(queryMap: Map<String, String>) {
         viewModelScope.launch {
             repository.getNewsArticles(queryMap).collect{
-                newsLiveData.value = it
+                    articleMutableSate.value = ArticleUIModel(false, it)
             }
         }
-        newsLiveData.observeForever(observer)
     }
 
     override fun onCleared() {
         super.onCleared()
-        newsLiveData.removeObserver(observer)
     }
 }
