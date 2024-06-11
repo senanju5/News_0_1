@@ -51,7 +51,7 @@ class NewsListFragment : Fragment() {
         query["from"] = "2024-05-11"
         query["sortBy"] = "publishedAt"
         query[ "apiKey"] = Utils.API_KEY
-        query["pageSize"] = "1"
+        query["page"] = "1"
         return query
     }
 
