@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel(private val repository: NewsRepository = NewsRepository()): ViewModel() {
-    //private val newsLiveData = MutableLiveData<List<Article>>()
     private val articleMutableSate by lazy {MutableStateFlow(ArticleUIModel(true, null))  }
     internal val articleList : StateFlow<ArticleUIModel> = articleMutableSate
 
