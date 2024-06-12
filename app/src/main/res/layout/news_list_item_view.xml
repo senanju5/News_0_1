@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/newsImage"
+        android:layout_width="150dp"
+        android:layout_height="100dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/ic_launcher_background"
+        android:scaleType="fitXY"
+      />
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/newsImage"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Title Text"
+        android:textSize="20sp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        />
+
+    <TextView
+        android:id="@+id/authorText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/titleText"
+        app:layout_constraintEnd_toEndOf="@id/titleText"
+        app:layout_constraintTop_toBottomOf="@id/titleText"
+        android:maxLines="1"
+        android:ellipsize="end"
+        tools:text="Author Text" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

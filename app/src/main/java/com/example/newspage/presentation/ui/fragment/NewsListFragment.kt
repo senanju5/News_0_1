@@ -10,10 +10,16 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newspage.R
+import com.example.newspage.adapter.NewsListAdapter
+import com.example.newspage.data.model.Article
 import com.example.newspage.databinding.FragmentNewsListBinding
 import com.example.newspage.presentation.MainViewModel
 import com.example.newspage.utils.Utils
+import com.example.newspage.utils.Utils.Companion.getQuery
 import kotlinx.coroutines.launch
 
 
@@ -25,6 +31,7 @@ import kotlinx.coroutines.launch
 class NewsListFragment : Fragment() {
   private lateinit var binding: FragmentNewsListBinding
    private val newsViewModel by activityViewModels<MainViewModel>()
+    private lateinit var newsAdapter:NewsListAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -32,6 +39,7 @@ class NewsListFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentNewsListBinding.inflate(inflater, container, false)
         newsViewModel.getNews(getQuery())
+        setUpRecyclerView()
         return binding.root
     }
 
@@ -39,20 +47,23 @@ class NewsListFragment : Fragment() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 newsViewModel.articleList.collect {
-                    Log.d("NewsListFragment", "articleList: $it")
+                    it.articles?.let { it1 -> newsAdapter.submitData(it1) }
+
                 }
             }
         }
     }
 
-    fun getQuery():Map<String,String> {
-        val query = HashMap<String, String>()
-        query["q"] = "tesla"
-        query["from"] = "2024-05-11"
-        query["sortBy"] = "publishedAt"
-        query[ "apiKey"] = Utils.API_KEY
-        query["page"] = "1"
-        return query
+    fun setUpRecyclerView() {
+        binding.articleListView.layoutManager = LinearLayoutManager(requireContext())
+        newsAdapter = NewsListAdapter { article: Article, i: Int ->
+            findNavController().navigate(R.id.action_newsListFragment_to_newsDetailFragment)
+        }
+        val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        binding.articleListView.addItemDecoration(decoration)
+        binding.articleListView.adapter = newsAdapter
     }
+
+
 
 }

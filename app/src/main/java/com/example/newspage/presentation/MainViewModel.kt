@@ -16,7 +16,7 @@ class MainViewModel(private val repository: NewsRepository = NewsRepository()): 
     private val articleMutableSate by lazy {MutableStateFlow(ArticleUIModel(true, null))  }
     internal val articleList : StateFlow<ArticleUIModel> = articleMutableSate
 
-   fun getNews(queryMap: Map<String, String>) {
+   fun getNews(queryMap: HashMap<String, String>) {
         viewModelScope.launch {
             repository.getNewsArticles(queryMap).collect{
                     articleMutableSate.value = ArticleUIModel(false, it)

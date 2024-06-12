@@ -1,37 +1,32 @@
 package com.example.newspage.data.repository
 
-import android.util.Log
+
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.example.newspage.data.model.Article
+import com.example.newspage.data.paging.ArticlePagingSource
 import com.example.newspage.data.remotedata.RemoteDataSource
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 
 class NewsRepository(private val remoteDataSource: RemoteDataSource = RemoteDataSource()) {
 
-    suspend fun getNewsArticles(queryMap: Map<String, String>): Flow<List<Article>> = flow {
-        val response = remoteDataSource.getRemoteData(queryMap)
-        val articleList:MutableList<Article> = mutableListOf()
-        if(response.isSuccessful) {
-            val articles = response.body()?.articles ?: emptyList()
-            Log.d("NewsRepository", "Response: ${response.body()}")
+   private fun getArticles(queryMap: HashMap<String, String>): Flow<PagingData<com.example.newspage.data.network.model.Article>> = Pager (
+        config = PagingConfig(pageSize = 1, maxSize = 10),
+        pagingSourceFactory = { ArticlePagingSource(remoteDataSource, queryMap) }
 
-            for (article in articles) {
-                articleList.add(
-                    Article(
-                        article.title,
-                        article.urlToImage,
-                        article.description,
-                        article.content,
-                        article.author
-                    )
-                )
+    ).flow
+
+     fun getNewsArticles(queryMap: HashMap<String, String>): Flow<PagingData<Article>> = getArticles(queryMap).map {
+            it.map {
+                Article(
+                    it.title,
+                    it.urlToImage,
+                    it.description,
+                    it.content,
+                    it.author)
             }
-            emit(articleList)
-        } else {
-            Log.d("NewsRepository", "Error: ${response.code()}")
-            emit(emptyList())
-        }
-    }.flowOn(Dispatchers.IO)
+    }
 }
