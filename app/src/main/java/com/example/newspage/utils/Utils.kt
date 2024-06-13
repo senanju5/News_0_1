@@ -8,7 +8,7 @@ class Utils {
         fun getQuery():HashMap<String,String> {
             val query = HashMap<String, String>()
             query["q"] = "tesla"
-            query["from"] = "2024-05-12"
+            query["from"] = "2024-05-11"
             query["sortBy"] = "publishedAt"
             query[ "apiKey"] = API_KEY
             query["page"] = "1"
